@@ -36,8 +36,13 @@ class AuthController {
     }
     
     public function logout() {
+        // Xóa tất cả các session variables
         session_unset();
+        
+        // Hủy session
         session_destroy();
+        
+        // Chuyển hướng về trang đăng nhập
         header('Location: index.php?controller=auth&action=login');
         exit();
     }
