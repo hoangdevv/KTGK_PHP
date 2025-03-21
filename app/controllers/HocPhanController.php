@@ -25,14 +25,18 @@ class HocPhanController {
     
     public function register() {
         if (!isset($_SESSION['maSV'])) {
+            header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => 'Vui lòng đăng nhập']);
             return;
         }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['maHP'])) {
+            header('Content-Type: application/json');
+            
             $maHP = $_POST['maHP'];
             $maSV = $_SESSION['maSV'];
             
+            // Kiểm tra đã đăng ký chưa
             if ($this->hocPhanModel->isRegistered($maSV, $maHP)) {
                 echo json_encode([
                     'success' => false, 
@@ -41,6 +45,7 @@ class HocPhanController {
                 return;
             }
             
+            // Thực hiện đăng ký
             if ($this->hocPhanModel->createDangKy($maSV, $maHP)) {
                 $count = $this->hocPhanModel->getRegisteredCoursesCount($maSV);
                 echo json_encode([

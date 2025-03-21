@@ -38,10 +38,12 @@
 
 <script>
 $(document).ready(function() {
-    $('.register-btn').click(function() {
+    $('.register-btn').click(function(e) {
+        e.preventDefault();
         const btn = $(this);
         const maHP = btn.data('mahp');
         
+        // Disable button and show loading state
         btn.prop('disabled', true)
            .html('<i class="fas fa-spinner fa-spin"></i> Đang đăng ký...');
         
@@ -49,32 +51,31 @@ $(document).ready(function() {
             url: 'index.php?controller=hocphan&action=register',
             type: 'POST',
             data: { maHP: maHP },
-            dataType: 'json',
-            success: function(result) {
-                if (result.success) {
-                    btn.removeClass('btn-primary')
-                       .addClass('btn-success')
-                       .html('<i class="fas fa-check-circle"></i> Đã đăng ký')
-                       .prop('disabled', true);
-                    
-                    // Update header badge
-                    $('.badge.badge-light').text(result.count);
-                    
-                    // Optional: Reload page after short delay
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
-                } else {
-                    btn.prop('disabled', false)
-                       .html('<i class="fas fa-plus-circle"></i> Đăng ký');
-                    alert(result.message);
-                }
-            },
-            error: function() {
+            dataType: 'json'
+        })
+        .done(function(result) {
+            if (result.success) {
+                btn.removeClass('btn-primary')
+                   .addClass('btn-success')
+                   .html('<i class="fas fa-check-circle"></i> Đã đăng ký')
+                   .prop('disabled', true);
+                
+                $('.registration-count').text(result.count);
+                
+                setTimeout(function() {
+                    window.location.href = 'index.php?controller=dangky&action=index';
+                }, 1000);
+            } else {
                 btn.prop('disabled', false)
                    .html('<i class="fas fa-plus-circle"></i> Đăng ký');
-                alert('Có lỗi xảy ra khi đăng ký');
+                alert(result.message);
             }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            console.error('Error:', textStatus, errorThrown);
+            btn.prop('disabled', false)
+               .html('<i class="fas fa-plus-circle"></i> Đăng ký');
+            alert('Có lỗi xảy ra khi đăng ký');
         });
     });
 });

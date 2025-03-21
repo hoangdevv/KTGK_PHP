@@ -42,12 +42,13 @@ class HocPhanModel {
         try {
             $this->conn->beginTransaction();
             
-            // Check if already registered
+            // Kiểm tra đã đăng ký chưa
             if($this->isRegistered($maSV, $maHP)) {
+                $this->conn->rollBack();
                 return false;
             }
             
-            // Create DangKy record
+            // Tạo DangKy record
             $query1 = "INSERT INTO DangKy (NgayDK, MaSV) VALUES (CURDATE(), ?)";
             $stmt1 = $this->conn->prepare($query1);
             $stmt1->bindParam(1, $maSV);
@@ -55,7 +56,7 @@ class HocPhanModel {
             
             $maDK = $this->conn->lastInsertId();
             
-            // Create ChiTietDangKy record
+            // Tạo ChiTietDangKy record
             $query2 = "INSERT INTO ChiTietDangKy (MaDK, MaHP) VALUES (?, ?)";
             $stmt2 = $this->conn->prepare($query2);
             $stmt2->bindParam(1, $maDK);
@@ -66,6 +67,7 @@ class HocPhanModel {
             return true;
         } catch(PDOException $e) {
             $this->conn->rollBack();
+            error_log($e->getMessage());
             return false;
         }
     }

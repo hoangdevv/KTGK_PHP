@@ -51,7 +51,7 @@ class SinhVienController
                     $target_file = $target_dir . $fileName;
                     
                     if (move_uploaded_file($_FILES['hinh']['tmp_name'], $target_file)) {
-                        $hinh = '/websinhvien/Content/images/' . $fileName;
+                        $hinh = '/Content/images/' . $fileName;
                     }
                 }
                 
