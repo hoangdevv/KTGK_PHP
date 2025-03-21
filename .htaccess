@@ -1,0 +1,27 @@
+# Enable rewrite engine
+RewriteEngine On
+RewriteBase /websinhvien/
+
+# Protect sensitive directories
+RedirectMatch 403 ^/app/(config|models|controllers)/.*$
+
+# Disable directory listing
+Options -Indexes
+
+# Route all requests through index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+# Basic security headers
+Header set X-Content-Type-Options "nosniff"
+Header set X-XSS-Protection "1; mode=block"
+
+# Set include path
+php_value include_path ".;C:/Code/Xampp/htdocs/websinhvien/app"
+
+# Allow access to images
+<FilesMatch "\.(jpg|jpeg|png|gif)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
